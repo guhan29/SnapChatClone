@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,6 +15,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.lang.Exception
@@ -93,10 +95,22 @@ class CreateSnapActivity : AppCompatActivity() {
             Toast.makeText(this, "UploadFailed", Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener { taskSnapshot ->
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            //val downloadUrl = mountainRef.downloadUrl.result
+
+            var downloadUrl: String? = null
+            //downloadUrl = taskSnapshot.metadata!!.reference!!.downloadUrl?.toString()
 
             val intent = Intent(this, ChooseUserActivity::class.java)
-            startActivity(intent)
+
+            var result: Task<Uri> = taskSnapshot.storage.downloadUrl
+            result.addOnSuccessListener { uri: Uri? ->
+                downloadUrl = uri.toString()
+                //Log.i("downloadUrl", uri.toString())
+            }.addOnCompleteListener {
+                intent.putExtra("imageUrl", downloadUrl)
+                intent.putExtra("imageName", imageName)
+                intent.putExtra("message", messageEditText?.text.toString())
+                startActivity(intent)
+            }
         }
     }
 }
