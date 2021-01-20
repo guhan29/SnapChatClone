@@ -94,6 +94,9 @@ class CreateSnapActivity : AppCompatActivity() {
         }.addOnSuccessListener { taskSnapshot ->
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             //val downloadUrl = mountainRef.downloadUrl.result
+
+            val intent = Intent(this, ChooseUserActivity::class.java)
+            startActivity(intent)
         }
     }
 }

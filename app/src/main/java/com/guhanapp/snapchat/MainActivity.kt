@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                                     if (task.isSuccessful) {
                                         // Add to database
                                         //val database = Firebase.database
-                                        Firebase.database.getReference().child(task.result?.user!!.uid).child("email").setValue(emailEditText?.text.toString())
+                                        Firebase.database.getReference().child("users").child(task.result?.user!!.uid).child("email").setValue(emailEditText?.text.toString())
                                         logIn();
                                     } else {
                                         // If sign in fails, display a message to the user.
