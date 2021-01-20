@@ -87,7 +87,8 @@ class CreateSnapActivity : AppCompatActivity() {
 
         // FirebaseStorage.getInstance().getReference().child("images").child(imageName)
 
-        var mountainRef = FirebaseStorage.getInstance().getReference().child("images").child(imageName)
+        var mountainRef =
+            FirebaseStorage.getInstance().getReference().child("images").child(imageName)
 
         var uploadTask = mountainRef.putBytes(data)
         uploadTask.addOnFailureListener {

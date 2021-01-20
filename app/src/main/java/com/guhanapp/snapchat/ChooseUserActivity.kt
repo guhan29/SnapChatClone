@@ -26,36 +26,44 @@ class ChooseUserActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, emails)
         chooseUserListView?.adapter = adapter
 
-        FirebaseDatabase.getInstance().getReference().child("users").addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val email = snapshot?.child("email").value as String
-                emails.add(email)
-                keys.add(snapshot.key!!)
-                adapter.notifyDataSetChanged()
+        FirebaseDatabase.getInstance().getReference().child("users")
+            .addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val email = snapshot?.child("email").value as String
+                    emails.add(email)
+                    keys.add(snapshot.key!!)
+                    adapter.notifyDataSetChanged()
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+
+        chooseUserListView?.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, view, position, id ->
+                val currentEmail = FirebaseAuth.getInstance().currentUser!!.email!!.toString()
+                val imageName = intent.getStringExtra("imageName").toString()
+                val imageUrl = intent.getStringExtra("imageUrl").toString()
+                val message = intent.getStringExtra("message").toString()
+
+                val snapMap: Map<String, String> = mapOf(
+                    "from" to currentEmail,
+                    "imageName" to imageName,
+                    "imageUrl" to imageUrl,
+                    "message" to message
+                )
+
+                FirebaseDatabase.getInstance().getReference().child("users")
+                    .child(keys.get(position)).child("snaps").push().setValue(snapMap)
+
+                val intent = Intent(this, SnapsActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
             }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-        
-        chooseUserListView?.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val currentEmail = FirebaseAuth.getInstance().currentUser!!.email!!.toString()
-            val imageName = intent.getStringExtra("imageName").toString()
-            val imageUrl = intent.getStringExtra("imageUrl").toString()
-            val message = intent.getStringExtra("message").toString()
-
-            val snapMap: Map<String, String> = mapOf("from" to currentEmail, "imageName" to imageName, "imageUrl" to imageUrl, "message" to message)
-
-            FirebaseDatabase.getInstance().getReference().child("users").child(keys.get(position)).child("snaps").push().setValue(snapMap)
-
-            val intent = Intent(this, SnapsActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
-        }
     }
 }

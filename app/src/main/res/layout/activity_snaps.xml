@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".SnapsActivity">
 
+    <ListView
+        android:id="@+id/snapsListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="204dp"
+        tools:layout_editor_absoluteY="211dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
