@@ -52,6 +52,9 @@ dependencies {
 
     // Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
+
+    // Database
+    implementation 'com.google.firebase:firebase-database-ktx'
 }
 
 apply plugin: 'com.google.gms.google-services'
